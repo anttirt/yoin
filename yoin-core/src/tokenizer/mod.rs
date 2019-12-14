@@ -30,7 +30,7 @@ impl<'a> Token<'a> {
         }
     }
 
-    pub fn surface(&self) -> &str {
+    pub fn surface(&self) -> &'a str {
         self.surface
     }
 
@@ -42,7 +42,7 @@ impl<'a> Token<'a> {
         self.start + self.surface().len()
     }
 
-    pub fn features(&self) -> FeatureIter {
+    pub fn features(&self) -> FeatureIter<'a> {
         FeatureIter(self.contents.split(','))
     }
 }
