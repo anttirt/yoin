@@ -174,8 +174,12 @@ impl<'a> Lattice<'a> {
                 }
             }
             for m in sdic.dic.lookup_str_iter(input_chars.as_str()) {
-                is_matched = true;
-                la.add(byte_pos, NodeKind::Known(m));
+                // skip surfaces that are too long for the text
+                // nb. subtract one for the EOS node
+                if (la.end_nodes.len() - 1) > (la.pointer + m.surface.chars().count()) {
+                    is_matched = true;
+                    la.add(byte_pos, NodeKind::Known(m));
+                }
             }
             let ch = input_chars.clone().next().unwrap();
             let category = sdic.unknown_dic.categorize(ch);
