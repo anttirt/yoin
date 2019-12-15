@@ -30,7 +30,7 @@ pub fn sysdic() -> SysDic {
     }
 }
 
-pub fn tokenizer<'a>() -> Tokenizer<'a> {
+pub fn tokenizer() -> Tokenizer<&'static [u8]> {
     Tokenizer::new(sysdic())
 }
 
