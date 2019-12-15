@@ -1,6 +1,7 @@
 use std::iter::Iterator;
 use std::str::Split;
 use std::fmt;
+use std::borrow::Borrow;
 
 mod lattice;
 use self::lattice::{Lattice, Node, NodeKind};
@@ -63,21 +64,21 @@ impl<'a> Iterator for FeatureIter<'a> {
     }
 }
 
-pub struct Tokenizer<'a> {
+pub struct Tokenizer<T: Borrow<[u8]>> {
     sysdic: SysDic,
-    udic: Option<FstDic<&'a [u8]>>,
+    udic: Option<FstDic<T>>,
 }
 
-impl<'a> Tokenizer<'a> {
+impl<T: Borrow<[u8]>> Tokenizer<T> {
     pub fn new(sysdic: SysDic) -> Self {
         Tokenizer { sysdic: sysdic, udic: None }
     }
 
-    pub fn with_udic<'b>(self, udic: FstDic<&'b [u8]>) -> Tokenizer<'b> {
+    pub fn with_udic<U: Borrow<[u8]>>(self, udic: FstDic<U>) -> Tokenizer<U> {
         Tokenizer { sysdic: self.sysdic, udic: Some(udic) }
     }
 
-    pub fn tokenize(&'a self, input: &'a str) -> Vec<Token<'a>> {
+    pub fn tokenize<'a>(&'a self, input: &'a str) -> Vec<Token<'a>> {
         let la = Lattice::build(input, &self.sysdic, self.udic.as_ref());
         la.into_output().into_iter().map(|node| Token::new(node)).collect()
     }

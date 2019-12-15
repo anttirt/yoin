@@ -1,4 +1,5 @@
 use std::io::{self, Write};
+use std::borrow::Borrow;
 
 use dic::{Dic, Morph, FstDic};
 use dic::unknown::{UnknownDic, Entry, CharCategorize};
@@ -160,7 +161,7 @@ impl<'a> Lattice<'a> {
         self.add(!0, NodeKind::EOS);
     }
 
-    pub fn build(input: &'a str, sdic: &'a SysDic, udic: Option<&'a FstDic<&'a [u8]>>) -> Self {
+    pub fn build<T: Borrow<[u8]>>(input: &'a str, sdic: &'a SysDic, udic: Option<&'a FstDic<T>>) -> Self {
         let mut la = Lattice::new(input.chars().count(), sdic);
         let mut input_chars = input.chars();
         let mut byte_pos = 0;
