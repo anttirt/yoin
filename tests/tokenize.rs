@@ -31,3 +31,45 @@ fn tokenize_works() {
         assert_eq!(t.features().collect::<Vec<_>>(), expected_features);
     }
 }
+
+#[test]
+fn tokenize_testcase_1() {
+    let input = "魔神の御稚児。 ";
+    let tokenizer = yoin::ipadic::tokenizer();
+    for token in tokenizer.tokenize(input) {
+        print!("{} ", token.surface());
+        for feat in token.features() {
+            print!("{},", feat);
+        }
+        println!();
+    }
+    println!("done");
+}
+
+#[test]
+fn tokenize_testcase_2() {
+    let input = "菜穂子";
+    let tokenizer = yoin::ipadic::tokenizer();
+    for token in tokenizer.tokenize(input) {
+        print!("{} ", token.surface());
+        for feat in token.features() {
+            print!("{},", feat);
+        }
+        println!();
+    }
+    println!("done");
+}
+
+#[test]
+fn tokenize_testcase_3() {
+    let input = "ユナ";
+    let tokenizer = yoin::ipadic::tokenizer();
+    for token in tokenizer.tokenize(input) {
+        print!("{} ", token.surface());
+        for feat in token.features() {
+            print!("{},", feat);
+        }
+        println!();
+    }
+    println!("done");
+}
