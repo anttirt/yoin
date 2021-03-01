@@ -78,6 +78,10 @@ impl<T: Borrow<[u8]>> Tokenizer<T> {
         Tokenizer { sysdic: self.sysdic, udic: Some(udic) }
     }
 
+    pub fn without_udic<U: Borrow<[u8]>>(self) -> Tokenizer<U> {
+        Tokenizer { sysdic: self.sysdic, udic: None }
+    }
+
     pub fn tokenize<'a>(&'a self, input: &'a str) -> Vec<Token<'a>> {
         let la = Lattice::build(input, &self.sysdic, self.udic.as_ref());
         la.into_output().into_iter().map(|node| Token::new(node)).collect()
