@@ -168,21 +168,27 @@ impl<'a> Lattice<'a> {
 
         while !input_chars.as_str().is_empty() {
             let mut is_matched = false;
+            let ch = input_chars.clone().next().unwrap();
             if let Some(udic) = udic {
                 for m in udic.lookup_str_iter(input_chars.as_str()) {
-                    is_matched = true;
-                    la.add(byte_pos, NodeKind::Known(m));
+                    if (la.end_nodes.len() - 1) > (la.pointer + m.surface.chars().count()) {
+                        if input_chars.as_str().starts_with(m.surface) {
+                            is_matched = true;
+                            la.add(byte_pos, NodeKind::Known(m));
+                        }
+                    }
                 }
             }
             for m in sdic.dic.lookup_str_iter(input_chars.as_str()) {
                 // skip surfaces that are too long for the text
                 // nb. subtract one for the EOS node
                 if (la.end_nodes.len() - 1) > (la.pointer + m.surface.chars().count()) {
-                    is_matched = true;
-                    la.add(byte_pos, NodeKind::Known(m));
+                    if input_chars.as_str().starts_with(m.surface) {
+                        is_matched = true;
+                        la.add(byte_pos, NodeKind::Known(m));
+                    }
                 }
             }
-            let ch = input_chars.clone().next().unwrap();
             let category = sdic.unknown_dic.categorize(ch);
             let cid = sdic.unknown_dic.category_id(ch);
             let input_str = input_chars.as_str();
