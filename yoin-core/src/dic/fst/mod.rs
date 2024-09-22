@@ -62,13 +62,13 @@ impl<'a> Iter<'a> {
     fn read_u16(&mut self) -> u16 {
         let from = self.iseq[self.pc..].as_ptr() as *const u16;
         self.pc += 2; // skip 16 bits
-        unsafe { *from }
+        unsafe { from.read_unaligned() }
     }
 
     fn read_u32(&mut self) -> u32 {
         let from = self.iseq[self.pc..].as_ptr() as *const u32;
         self.pc += 4; // skip 32 bits
-        unsafe { *from }
+        unsafe { from.read_unaligned() }
     }
 
     fn get_jump_offset(&mut self, jump_size: u8) -> usize {

@@ -37,19 +37,19 @@ impl<S: Borrow<str>> Morph<S> {
 impl<'a> Morph<&'a str> {
     pub unsafe fn decode(mut bs: &'a [u8]) -> Self {
         let ptr = bs.as_ptr() as *const u32;
-        let surface_len = *ptr;
+        let surface_len = ptr.read_unaligned();
         bs = &bs[::std::mem::size_of::<u32>()..];
         let surface = ::std::str::from_utf8_unchecked(&bs[..surface_len as usize]);
         bs = &bs[surface_len as usize..];
 
         let ptr = bs.as_ptr() as *const u16;
-        let left_id = *ptr;
-        let right_id = *ptr.offset(1);
-        let weight = *(ptr.offset(2) as *const i16);
+        let left_id = ptr.read_unaligned();
+        let right_id = ptr.offset(1).read_unaligned();
+        let weight = (ptr.offset(2) as *const i16).read_unaligned();
         bs = &bs[::std::mem::size_of::<i16>() * 3..];
 
         let ptr = bs.as_ptr() as *const u32;
-        let contents_len = *ptr;
+        let contents_len = ptr.read_unaligned();
         bs = &bs[::std::mem::size_of::<u32>()..];
         let contents = ::std::str::from_utf8_unchecked(&bs[..contents_len as usize]);
 

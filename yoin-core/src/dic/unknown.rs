@@ -112,8 +112,8 @@ impl<'a> CharCategorize for CompiledCharTable<'a> {
 impl<'a> CompiledCharTable<'a> {
     pub unsafe fn decode(bs: &'a [u8]) -> Self {
         let ptr = bs.as_ptr() as *const u8;
-        let n = *ptr;
-        let default_id = *ptr.offset(1);
+        let n = ptr.read_unaligned();
+        let default_id = ptr.offset(1).read_unaligned();
         let ptr = ptr.offset(2);
         let invokes = ::std::slice::from_raw_parts(ptr, n as usize);
         let ptr = ptr.offset(n as isize);
@@ -196,12 +196,12 @@ impl<'a> Entry<'a> {
 
     pub unsafe fn decode(bs: &'a [u8]) -> Self {
         let ptr = bs.as_ptr() as *const u16;
-        let left_id = *ptr;
-        let right_id = *ptr.offset(1);
+        let left_id = ptr.read_unaligned();
+        let right_id = ptr.offset(1).read_unaligned();
         let ptr = ptr.offset(2) as *const i16;
-        let weight = *ptr;
+        let weight = ptr.read_unaligned();
         let ptr = ptr.offset(1) as *const u32;
-        let len = *ptr;
+        let len = ptr.read_unaligned();
         let ptr = ptr.offset(1) as *const u8;
         let buf = ::std::slice::from_raw_parts(ptr, len as usize);
         let contents = ::std::str::from_utf8_unchecked(buf);
@@ -372,19 +372,19 @@ impl<'a> UnknownDic for CompiledUnkDic<'a> {
 impl<'a> CompiledUnkDic<'a> {
     pub unsafe fn decode(bs: &'a [u8]) -> Self {
         let ptr = bs.as_ptr() as *const u32;
-        let ind_len = *ptr;
+        let ind_len = ptr.read_unaligned();
         let ptr = ptr.offset(1) as *const u32;
         let indices = ::std::slice::from_raw_parts(ptr, ind_len as usize);
         let ptr = ptr.offset(ind_len as isize);
-        let counts_len = *ptr;
+        let counts_len = ptr.read_unaligned();
         let ptr = ptr.offset(1) as *const u32;
         let counts = ::std::slice::from_raw_parts(ptr, counts_len as usize);
         let ptr = ptr.offset(counts_len as isize);
-        let entry_offsets_len = *ptr;
+        let entry_offsets_len = ptr.read_unaligned();
         let ptr = ptr.offset(1) as *const u32;
         let entry_offsets = ::std::slice::from_raw_parts(ptr, entry_offsets_len as usize);
         let ptr = ptr.offset(entry_offsets_len as isize);
-        let entries_len = *ptr;
+        let entries_len = ptr.read_unaligned();
         let ptr = ptr.offset(1) as *const u8;
         let entries = ::std::slice::from_raw_parts(ptr, entries_len as usize);
         let ptr = ptr.offset(entries_len as isize);
